@@ -1,0 +1,7 @@
+## Challenge: use tr and rev, to create the reverse complement of the sequence contained in DNA.txt
+
+cat DNA.txt | grep -v ">" | tr -d "\n" | rev | tr 'ATCG' 'TAGC'
+
+## Challenge: use sed and a regular expression to replace any four-letter word that starts with ‘b’ with ’book
+
+cat filein.txt | sed -E 's/b[a-z]{3}/book/g'

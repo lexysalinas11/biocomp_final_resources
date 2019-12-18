@@ -1,0 +1,25 @@
+# A script to count the number of sequences that include the start of a gene for 
+# each individual at a single site
+# Usage: bash counting1.sh *.txt
+
+for indiv in "$@"
+do
+	echo $indiv
+	cat $indiv | grep "ATG" | wc -l
+done 
+
+# counts the number of sequences with a gene (ATG) for all individuals at a single site
+# usage: cat *.txt | bash counting2.sh
+
+grep "ATG" | wc -l
+
+# counts the number of genes for each individual across all sites and deals
+# with sequencer issue where sequences beyond the first N are bad
+
+# usage: find . -name "*.txt" | bash counting3.sh 5
+files=$(cat)
+for indiv in $files
+do
+	echo $indiv
+	cat $indiv | head -n $1 | grep "ATG" | wc -l
+done

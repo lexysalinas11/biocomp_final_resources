@@ -1,0 +1,151 @@
+---
+title: "Biocomp Quizzes and Answers"
+author: "Salinas, Alexa"
+date: "12/13/2019"
+output: word_document
+---
+
+## *Quiz 1*
+
+1. Commands, flags, and arguments in the Unix Shell are case sensitive. In other words, the Shell interprets upper and lower case versions of the same letter differently.
+
+**False**
+
+2. The uppermost directory in most file systems is called the "root". Unix uses which symbol to denote the root directory?
+
+**/**
+
+3. Match the following ls command flags with the format or functionality they induce:
+A. show hidden files and directories
+B. display a / after each name that is a directory
+C. list in long format
+
+1. -F **B**
+2. -a **A**
+3. -l (lowercase ell) **C**
+
+## *Quiz 2*
+
+1. Select the Unix code below that redirects the first 5 lines of 'old.txt' into a new file called 'new.txt'.
+
+**cat old.txt | tail -n 5 > new.txt**
+
+2. In your own words and two sentences or less, why are for loops useful in Unix?
+
+**For loops are useful in Unix because they prompt commands to be performed repeatedly so that the user doesn't have to do the same thing multiple times.**
+
+3. Imagine you have the following files in your working directory: a.csv, b.csv, one.txt, two.txt, z.csv. Choose the expected output from these Unix commands:
+
+for file in *.txt
+
+do
+
+  echo $file
+
+done
+
+**one.txt**
+**two.txt**
+
+## *Quiz 3*
+
+1. Match the shell script variable with the argument it refers to.
+A. fifth
+B. second
+C. all of them
+D. first
+
+1. $1 **D**
+2. $2 **B**
+3. $5 **A**
+4. $@ **C**
+
+2. In order to avoid problems with file names containing spaces being passed to shell scripts as an argument, you should surround the shell script variable (e.g. $1) with ____________ when you use it.
+
+**"$1"**
+
+3. For loops do not work in a shell script.
+
+**False**
+
+## *Quiz 4*
+
+1. In regular expressions, all alphanumeric characters match themselves.
+
+**True**
+
+2. The regular expression b.{1,2}k matches all of the following words except...
+
+book
+bookbag
+**break**
+background
+
+3. Each of the strings below is matched by which regular expression? canoe cannery canary carton
+
+**can*[a-z]?**
+ca[nr][a-z]{3}
+can+
+ca[nr][a-z]{5,10}
+
+## *Quiz 5*
+
+1. Git is used when developing scientific computer code because...
+
+**keep a history of code as it is developed in order to allow reversion to past versions and experiment with new aspects of the code.**
+
+2. Git is the very first method for version control ever developed.
+
+**False**
+
+3. To create a new git repository, we use the command *git initialize*.
+
+**False**
+
+## *Quiz 6*
+
+1. *ssh* (secure shell) is used to connect to another computer because...
+
+**more than 1 shell is used to make the remote connection**
+
+2. Someone needs to be using the remote computer in order for your commands sent to the remote computer to be executed.
+
+**False**
+
+3. To disconnect from the remote computer after connecting with *ssh*, the command *exit* is used.
+
+**True**
+
+## *Quiz 7*
+
+1. How many panels are by default present in R Studio?
+
+**4**
+
+2. *Bash* or *Unix* has many more defined data structures than the R programming language.
+
+**False**
+
+## *Quiz 8*
+
+1. For loops in R do not follow the same basic structure:
+
+*for index_variable in set*
+
+that we learned when working in Unix.
+
+**False**
+
+2. Write a for loop in R that would print each of the numbers 1 to 5.
+
+```{r 8.2}
+
+a<-1:5
+printnum<-numeric(length=length(a))
+for (i in seq_along(a)){
+  printnum[i]<-a[i]
+}
+printnum
+
+```
+

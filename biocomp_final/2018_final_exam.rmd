@@ -1,0 +1,170 @@
+---
+title: "2018 Final Exam"
+author: "Salinas, Alexa"
+date: "12/17/2019"
+output: word_document
+---
+
+## 1. Write a regular expression, and only the regular expression, for each of the three descriptions below:
+
+a. a DNA sequence beginning with AAATTT and containing 10-15 codons (triplets of DNA bases),
+including the initial AAATTT
+
+AAATTT([ATCG]{3}){10,15}$
+
+b. any of the words cot, rot, hot, shot, short, fort
+
+[crhf]o[rt]
+
+## 2. The directory home contains three directories (records, poems, photos). Both records and poems contain
+a set of .txt files that you will use for the tasks described below:
+
+a. Assuming you begin in the home directory on a Unix system, provide the Unix code required to make
+a new directory archive in the records directory, copy all .txt files from records to archive, and
+delete any files with a filename starting with ‘old’ from the records directory.
+
+cd records #moving into records directory
+mkdir archive #making a new directory in the records directory called archive
+cp *.txt archive/ #copying any files that end in .txt to the directory archive
+rm old* #removing any files in the records directory that start with old
+
+b. Assuming you begin in the home directory on a Unix system, provide the Unix code required to append
+your initials to the beginning of the filename for all .txt files in the poems directory. Use a for-loop to
+accomplish this task.
+
+cd poems #moving into poems directory*
+for file in *.txt #for the file in the set of files that end in .txt
+do
+cat $file > JW$file #cat the file into a file with the appended name
+done
+
+## 3. The information below is contained in the file lunch.txt. Provide Unix code needed to generate a new file (Danslunch.txt) that contains only entries for dan that are sorted by menu item and changes all occurrences
+of dan to Dan.
+dan hamburger
+alice tacos
+dan waffles
+dan salad
+ralph pizza
+alice burrito
+
+cat lunch.txt | grep dan | sort -k 2 | sed ‘s/dan/Dan/g’ > Danslunch.txt
+
+- concatenates the file, finds the lines with dan in it, sorts the second column (food) alphabetically, substitutes the word dan for Dan, outputt it into new file
+
+## 4. Earlier in the semester you coded a guessing game choosing an integer between 1 and 100. A non-functional version of R code for this task is below and provided in a script called guessing_game.R. Fix any errors in the code and adjust the code so that the player only has 5 attempts to guess the correct answer or they lose.
+
+# randomly draw an integer between 1 and 100
+myNumber=sample(x=1:50,size=1)
+# create a while loop that runs until we indicate the guesser is correct
+correct=0
+while(correct==0){
+# prompt the user for a guess
+guess=readline(promp="Guess:")
+if(guess<theNumber)
+  print("Higher")
+else{
+  print("Lower")
+}
+if(guess=myNumber){
+  print("Correct")
+  correct=1
+  }
+}
+
+```{r 4A.}
+
+# randomly draw an integer between 1 and 100
+myNumber=sample(x=1:100,size=1) #drawing a number btwn 1 and 100, not 1 and 50
+
+# create a while loop that runs until we indicate the guesser is correct
+correct=0 #starting the number of guesses (correct)at 0
+while(correct<5){ #while the number of guesses (correct) is less than 5
+  #prompt the user for a guess
+  guess=readline(prompt = "Guess:") #prompts user to put in number to guess
+  
+  if(guess<myNumber){ #if the guess is less than the number
+    print("Higher") #prints higher
+    correct=correct+1 #adds 1 to the number of guesses, so correct increases by 1
+  }else{
+    if (guess>myNumber){ #if guess is greater than the number
+      print("Lower") #prints lower
+    correct=correct+1 #adds 1 to the number of guesses, so correct increases by 1
+    }
+  }
+  if(guess==myNumber){ #if guess equals the number
+    print("Correct") #print "correct"
+  }
+}
+
+#once correct=5, it ends the game and you are not allowed to guess anymore
+
+```
+
+5. Write a function in R that takes a vector as an argument and returns the sum of even numbers contained
+in the vector. Remember %% will return the remainder of integer division. Also be sure to write your function to handle the case where the vector supplied contains no even numbers.
+
+```{r 5A.}
+
+sum_even_num<-function(vector){ #creating a function for a vector that sums the even numbers
+  evensum=0 #starting even sum at 0
+  for (i in 1:length(vector)){ # for observation in the vector
+    if (vector[i]%%2==0){ #if the remainder when the value is divided by 2 equals zero (an even number)
+      evensum=evensum+vector[i] #add the value to evensum
+    }
+  }
+return(evensum) #returns even sum
+}
+
+#usage with a vector 
+x=(1:10)
+sum_even_num(x)
+#returns 30
+#if no even numbers in vector, returns 0, because there is no sum of the even numbers
+
+```
+
+6. Assume that y has an even number of entries and that the first half of y come from Group 1 and the
+second half of y come from Group 2. These data are available in y.csv. Provide the R code to generate a
+barplot of the means of y for Group 1 and Group 2.
+
+```{r 6A.}
+
+y=read.csv(file="y.csv", header = TRUE) #loading the csv file
+y$group=c(rep("Group 1",length(y)/2),rep("Group 2",length(y)/2))
+
+ggplot(data = y) + 
+geom_bar(aes(x=group, y=y), stat = "summary", fun.y="mean")+theme_classic()+xlab("Group")+ylab("mean of y")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

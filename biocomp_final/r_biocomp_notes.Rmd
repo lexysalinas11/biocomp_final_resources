@@ -1,0 +1,493 @@
+---
+title: "R Biocomp Notes"
+author: "Salinas, Alexa"
+date: "12/17/2019"
+output: word_document
+---
+
+## *Lec 18*
+
+```{r}
+
+#Lec 18 - Interacting w data using R
+#load data table test.dat 
+data = read.table(file="C:/Users/Owner/Desktop/biocomp_final/biocomp_notes/test.dat",header=FALSE,sep="")
+#testing for equality; need double =
+#T F F F 
+data[,1]==1
+#testing for greater than or less than as well
+#F F T T 
+data[,1]>2
+#logical values returned by a logic test can be used like numbers to index data structure
+data[data[,1]>2,]
+
+#load wages.csv; stringsAsFactors argument prevents strings from being treated as factors
+wages = read.csv(file="c:/Users/Owner/Desktop/biocomp_final/biocomp_notes/wages.csv",header=TRUE,stringsAsFactors=FALSE)
+#returns "data.frame"
+class(wages)
+#3294 4; dimension (cols x rows) of matrix, array, or data frame
+dim(wages)
+#returns first 6 rows and header
+head(wages)
+#extract all female wage data using sq brackets
+females=wages[wages[,1]=="female",]
+#1569 (rows) and 4 (cols)
+dim(females)
+#female
+unique(females[,1])
+#1569 4 
+females2=wages[wages$gender=="female",]
+dim(females2)
+#female
+unique(females2$gender)
+#using f(x) subset() rather than sq brackets indexing to access subet of data
+females3=subset(x=wages,wages$gender=="female")
+dim(females3)
+
+#Challenge
+#x1 has female unique years while x2 has male unique years
+f = cbind("female",x1)
+m = cbind("male",x2)
+out = rbind(f,m)
+
+#change working dir from Desktop to folder on Desktop (r-novice-inflammation)
+setwd("r-novice-inflammation/")
+#read a file within the dir 
+dat = read.csv(file="data/inflammation-01.csv",header=FALSE)
+#first 6 rows and headers of each
+head(dat)
+#ask what type of thing dat is 
+class(dat)
+#dimenstions (rows cols)
+dim(dat)
+#first values in dat, row 1, col 1
+dat[1,1]
+dat[30,20]
+#use function c (combine) to pick columns from certain rows
+#pick cols 10 and 20  rows 1, 3, and 5
+dat[c(1,3,5),c(10,20)]
+
+#set variable weight_kg to 55
+weight_kg <- 55
+#convert kg to lbs 
+2.2 * weight_kg 
+
+```
+
+Challenge:
+1. Write a file containing the unique gender-yearsExperience combinations contained in the file “wages.csv”. The file you create should contain gender in the first column and yearsExperience in a second column with a space separating the two columns. The rows should be sorted first by gender and then by
+yearsExperience, but remember to keep the pairings in a given row intact. Don’t worry about column
+names in the output file. Hint: order() is likely a useful function for sorting two-dimensional data
+structures in R. Also, the opposite of read.table() is write.table().
+
+```{r}
+data=read.table("C:/Users/Owner/Desktop/biocomp_final/biocomp_notes/wages.csv",header=TRUE,sep=",",stringsAsFactors=FALSE)
+dim(data)
+head(data)
+
+genderYears=data[,1:2]
+unique_genderYears=unique(genderYears)
+
+sorted=unique_genderYears[order(unique_genderYears[,1],unique_genderYears[,2]),]
+
+write.table(sorted,"sortedUniqueWages.txt",col.names=FALSE,row.names=FALSE,sep=" ",quote=FALSE)
+
+# could also have separated into female and male data sets, found unique years, and recombined into matrix or dataframe
+
+```
+
+2. Return the following information to the R console when the script is executed: the gender, yearsExperience, and wage for the highest earner, the gender, yearsExperience, and wage for the lowest earner, and the number of females in the top ten earners in this data set. Be sure to indicate, which output is which when returning them to the console.
+
+```{r}
+
+maxEarner=data[data$wage==max(data$wage),]
+print(c("The maximum earner was:", maxEarner[c(1:2,4)]))
+
+minEarner=data[data$wage==min(data$wage),]
+print(c("The minimum earner was:", minEarner[c(1:2,4)]))
+
+sortedWages=data[order(data$wage,decreasing=TRUE),]
+topTen=sortedWages[1:10,]
+femalesInTopTen=sum(topTen$gender=="female")
+print(paste("There were ",femalesInTopTen," females in the top ten earners.",sep=""))
+
+```
+
+3. Return one more piece of information to the console: the effect of graduating college (12 vs. 16 years of school) on the minimum wage for earners in this dataset.
+
+```{r}
+
+HSgrads=data[data$yearsSchool==12,]
+BSgrads=data[data$yearsSchool==16,]
+
+minHSwage=min(HSgrads$wage)
+minBSwage=min(BSgrads$wage)
+diff=round(minBSwage-minHSwage,3)
+print(paste("A bachelors degree provides ",diff," greater minimum wage."))
+
+```
+
+## *Lec 20*
+
+```{r}
+
+#challenge due fri
+function(x,species,width){
+  
+}
+
+#example using iris data
+#number of ind. of a species w trait >1
+treeCounts<-function(x,species,value){
+  subset<-x[x$species==taxa]
+  treeNum<-sum(subset$dbh>value)
+  
+  return(treeNum)  
+}
+
+treeCounts(x=myData,taxa="oak",value=0.5)
+
+#value above is a specific number
+
+#create subset of data w only oaks 
+subset<-x[x$species==taxa]
+
+#using if-else statements
+if(x>0){
+  
+}else{
+  
+}
+
+#use a for loop and if-else statement to calculate sum of wages for males and females in wages.csv
+#set variable and subset females and respective wages; do the same for males
+#find sum for all females and all males 
+wages<-read.csv("wages.csv")
+for(i in )
+
+```
+
+## *Lec ?*
+
+```{r}
+
+#Things to think about when plotting
+#clear axes/legend, clear scales, distringuishable colors/shapes w appropriate meaning, readable, conveying conclusions
+
+#remove everything from global environment at the beginning of a script
+rm(list=ls())
+
+#need to install and library packages
+
+library(ggplot2)
+library(cowplot)
+library(reshape2)
+
+mpg=read.table("C:/Users/Owner/Desktop/biocomp_final/mpg.txt",sep='\t',header=T,stringsAsFactors=F)
+head(mpg)
+a=ggplot(data=mpg,mapping=aes(x=hwy,y=cty))
+a+geom_line(aes(color=drv))+
+  stat_smooth(method="loess",color="black") #add linear model 
+  facet_grid(.~year) #separate by year; share everything but year
+  
+#multi-panel plots that are unrelated
+b=a+geom_point(color="blue",size=3)+
+  xlab("Displacement")+ylab("MPG-City")+
+  theme_bw()
+c=ggplot(mpg,aes(y=cty,x=displ))+
+  stat_summary(geom="bar",fun.y="mean")
+b
+c
+plot_grid(a,b,c,ncol=3) #ncol puts plots next to eachother 
+
+#Challenge 1: Scatter plot of mpg city vs mpg highway. Color code pts by 'drv' (four-wheel,front-wheel,rear-wheel). Add linear trendline to plot.
+a=ggplot(data=mpg,mapping=aes(x=hwy,y=cty))
+a+geom_line(aes(color=drv))+
+  stat_smooth(method="loess",color="black") #add linear model 
+facet_grid(.~year) #separate by year; share everything but year
+
+#C1 Answer:
+a=ggplot(data=mpg,aes(x=cty,y=hwy))+
+  geom_point()+theme_classic()
+a #ggplot only plots when you call it by the variablee; run only a
+
+#Challenge 2: "Density plot" of engine displacement. Save figure to computer using ggsave().
+#a+geom_density('displ',aes(x=displ,y=model))
+
+#C2 Answer:
+b=ggplot(mpg,aes(x=displ))+geom_density()
+b # line for running plot
+#ggsave(filename="Desktop/mpg_dens.pdg",plot b)
+
+#Challenge 3: Barplot of mean displacement for different numbers of cylinders (cyl).
+c=ggplot(mpg,aes(y=cty,x=displ))+
+  stat_summary(geom="bar",fun.y="mean")
+
+#C3 Answer:
+mpg2=mpg
+mpg2$cyl=as.character(mpg2$cyl)
+c=ggplot(mpg,aes(x=cyl,y=displ))+
+  stat_summary(geom="bar",fun.y="mean")+
+  stat_summary(geom="errorbar",fun.data="mean_se",width=0.3)
+c
+```
+
+## *Lec ?: Maps*
+
+```{r}
+
+statell<-read.csv("C:/Users/Owner/Desktop/biocomp_final/stateLatLong.csv")
+
+library(ggmap)
+library(maps)
+library(mapdata)
+library(usmap)
+
+states<-map_data("state")
+
+ggplot(data=states)+ #for all states 
+  geom_polygon(aes(x=long,y=lat,group=group),color="black")+coord_quickmap()
+
+#subset texas data
+ggplot(data=texas)+ #for all states 
+  geom_polygon(aes(x=long,y=lat,group=group),color="black")+coord_quickmap()
+
+```
+
+
+# *Lec ?: Index Sequential Variables*
+
+```{r}
+
+#Notes from Mon 11-25
+
+#remember that if we use a set that includes a sequence of integers, we can use index variable to sequentially use or modify each row/col of data structure
+#index variable is i 
+#set is 1,2,3,4
+
+myVector<-c('one','two','three','four')
+
+for(i in 1:4){
+  print(i)
+  print(myVector[i])
+}
+
+#use ants.csv, a for loop, and function paste() to make R sing "The Ants Go Marching"
+#use index variable i, ants[i,2], print(""), paste()
+#ants[i,2] are [rows,col]
+#for loop below prints out whole song in order 
+
+ants<-read.csv("C:/Users/Owner/Desktop/biocomp_final/ants.csv",header=F)
+
+for(i in 1:nrow(ants)){ #(i in 1:10) also works because there are 10 rows in the data frame
+  print(paste("The ants go marching ", ants[i, 2],"by", ants[i, 2],", hurrah, hurrah")) #this remains the same 
+  print(paste("The ants go marching ", ants[i, 2],"by", ants[i, 2],", hurrah, hurrah"))
+  print(paste("The ants go marching ", ants[i, 2],"by", ants[i, 2]))
+  print(paste("The little one stops to ", ants[i, 3],sep=""))
+  print("And they all go marching down to the ground")
+  print("To get out of the rain, BOOM! BOOM! BOOM!")
+}
+
+#specify any number of arguments in custom function and you can also specify defaults for those arguments
+#use if-else statements to provide user of a f(x) w warnings/errors when info they pass to arguments isn't correct
+#if you try something that is not numeric, like two, you will get an error
+
+multiplyByTwo<-function(x){
+  if(is.numeric(x)){
+    return(x*2)
+  }else{
+    print("x is not numeric")
+  }
+}
+
+#write f(x) that takes directory names as argument called dir plus any oter arguments required to accomplish specified task
+#sub-tasks: setwd to dir; know what files to do work on; loop through files 
+#count number of rows; more than 1 col?; how to deal w NAs; specify error for insufficient obs
+#what about non-csv files?; do calculation; return in vector; load file 
+#start w simplest core
+#calculate mean and sd 
+#arguments needed: dir, col, warningVerror
+
+```
+
+## *Lec 25: Pop dynamic model*
+
+```{r}
+
+#Lecture 25: Dynamic modeling 
+#have inputs, pools/stocks, and outputs 
+#mental (draw pic), conceptual (writing description), mathematical (translate to equation) model
+#learning & comparison 
+#Ex pop dynamic model: Nt+1 = Nt + rNt
+
+#What we need to run this model:
+#time points for simulation (100 yrs), place to store pop sizes, values for parameters (r and K)
+#loop for simulating, initial starting place 
+#set r to 0.2 and k to 100; N0=2
+
+N0=2
+r=0.2
+K=100
+timesteps=100
+#vector to store N's 
+Ns=numeric(length=timesteps)
+Ns[1]=N0
+#simulate 100x
+for(t in 1:100){
+  Ns[t+1]<-Ns[t]+r*Ns[t]*(1-Ns[t]/K)
+}
+#plot simulations 
+library(ggplot2)
+sim<-data.frame(time=1:length(Ns),N=Ns)
+ggplot(data=sim,aes(x=time,y=N))+geom_line()
+
+```
+
+## *Lec 26: More dynamic modeling* 
+
+```{r}
+
+### Lecture 26
+### Dynamic modeling
+
+### basic model
+# time points to simulate over (simulate for 100 years)
+# a place to store population sizes (value of state variable through time)
+# values for our parameters (r=0.2, K=100)
+# a loop for simulating
+# initial starting place; N0=2
+
+# set initial values and parameters
+N0=2 #starting pop 
+r=0.2 #rate of increase
+K=100 #carrying cap; pop can't go above 100
+timesteps=100
+# create vector to store N's and set initial N
+Ns=numeric(length=timesteps)
+Ns[1]=N0
+
+# simulate
+for(t in 1:(timesteps-1)){
+  Ns[t+1] <- Ns[t]+r*Ns[t]*(1-Ns[t]/K) #exponential pop growth equation
+}
+
+
+# plot simulation
+library(ggplot2)
+sim<-data.frame(time=1:length(Ns),N=Ns) #name df and set x/y axis variables
+ggplot(data=sim,aes(x=time,y=N))+geom_line()+theme_classic()
+
+
+### Challenge 1: show effects of r and N0; change r and N0 values 
+popSim<-function(N0=2,r=0.2,K=100,timesteps=100){
+  Ns<-numeric(timesteps)
+  Ns[1]<-N0
+  for(t in 1:(timesteps-1)){ #for loop for calculating pop at each time step
+    Ns[t+1]<-Ns[t]+Ns[t]*r*(1-Ns[t]/K)
+  }
+  return(Ns)
+}
+
+paramComps=data.frame(time=1:100) #creates df of timesteps from 1-100 (1 col)
+paramComps$lowN0lowr<-popSim() #runs popSim function (as is) defined above as for loop 
+#and creates new column (lowlow because both r and N0 are low numbers) w calculated values in paramComps
+paramComps$lowN0highr<-popSim(r=0.8) #keeps low N0 but increases r to 0.8; write variables changes
+#in () next to popSim
+paramComps$highN0lowr<-popSim(N0=50) #keeps low r but increases N0 to 50
+paramComps$highN0highr<-popSim(N0=50,r=0.8) #increase both values 
+
+dim(paramComps) #retrieve/set dimension of paramComps
+ggplot(data=paramComps)+ #call ggplot to use data=paramComps
+  geom_line(aes(x=time,y=lowN0lowr),col='black')+ #plot different columns as lines on same graph to compare
+  geom_line(aes(x=time,y=lowN0highr),col='blue')+
+  geom_line(aes(x=time,y=highN0lowr),col='orange')+ #starts at 50 (N0)
+  geom_line(aes(x=time,y=highN0highr),col='red')+ #starts at 50 (N0)
+  theme_classic()
+
+
+### Challenge 2: variation in resource availability
+popSim<-function(N0=2,r=0.2,K=100,timesteps=100,randomK=FALSE){
+  Ns<-numeric(timesteps)
+  Ns[1]<-N0
+  for(t in 1:(timesteps-1)){
+    if(randomK){
+      Kcur=rnorm(1,mean=K,sd=0.1*K) #"if" line uses Kcur (random generation for normal dist)
+      Ns[t+1]<-Ns[t]+Ns[t]*r*(1-Ns[t]/Kcur)
+    }else{
+      Ns[t+1]<-Ns[t]+Ns[t]*r*(1-Ns[t]/K) 
+    }
+  }
+  return(Ns)
+}
+
+challenge2out<-data.frame(time=1:100)
+challenge2out$base<-popSim() #uses original values 
+challenge2out$rand1<-popSim(randomK=TRUE) #values similar to base col
+challenge2out$rand2<-popSim(randomK=TRUE) #same as above
+
+ggplot(data=challenge2out)+
+  geom_line(aes(x=time,y=base),col='black')+
+  geom_line(aes(x=time,y=rand1),col='orange')+ 
+  geom_line(aes(x=time,y=rand2),col='red')+
+  theme_classic()
+
+# you could also accomplish this with a separate function that adds noise
+popSimRandom<-function(N0=2,r=0.2,K=100,timesteps=100){
+  Ns<-numeric(timesteps)
+  Ns[1]<-N0
+  for(t in 1:(timesteps-1)){
+    Kcur=rnorm(1,mean=K,sd=0.1*K)
+    Ns[t+1]<-Ns[t]+Ns[t]*r*(1-Ns[t]/Kcur)
+  }
+  return(Ns)
+}
+
+### Challenge 3: Adding events - immigration of 50 individuals 50 years in,
+### and 90% becoming ill and dying at 150 years
+
+# basic model run
+N0=2
+r=0.2
+K=100
+timesteps=250
+
+# create vector to store N's and set initial N
+Ns=numeric(length=timesteps)
+Ns[1]=N0
+
+# simulate
+for(t in 1:(timesteps-1)){
+  Ns[t+1] <- Ns[t]+r*Ns[t]*(1-Ns[t]/K)  
+}
+
+# model run with events
+N0=2
+r=0.2
+K=100
+timesteps=250
+
+# create vector to store N's and set initial N
+NsEvents=numeric(length=timesteps)
+NsEvents[1]=N0
+
+# simulate
+for(t in 1:(timesteps-1)){
+  if(t==50){
+    # 50 additional new individuals due to immigration
+    NsEvents[t+1] <- NsEvents[t]+r*NsEvents[t]*(1-NsEvents[t]/K)+50 #adding 50 ind
+  }else if(t==150){
+    # 90% of individuals die due to illness
+    NsEvents[t+1] <- NsEvents[t]*0.1 #0.1 because 0.9 die 
+  }else{
+    NsEvents[t+1] <- NsEvents[t]+r*NsEvents[t]*(1-NsEvents[t]/K)
+  }
+}
+
+# plot simulation
+simEvents<-data.frame(time=1:length(Ns),N=Ns,Nevents=NsEvents)
+ggplot(data=simEvents)+
+  geom_line(aes(x=time,y=N),col='black')+
+  geom_line(aes(x=time,y=Nevents),col='red')+
+  theme_classic()
+
+```

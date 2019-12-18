@@ -1,0 +1,152 @@
+---
+title: "Biocomp Notes"
+author: "Salinas, Alexa"
+date: "12/17/2019"
+output: word_document
+---
+
+## *Lec 18*
+
+```{r}
+
+#Lec 18 - Interacting w data using R
+#load data table test.dat 
+data = read.table(file="C:/Users/Owner/Desktop/biocomp_final/biocomp_notes/test.dat",header=FALSE,sep="")
+#testing for equality; need double =
+#T F F F 
+data[,1]==1
+#testing for greater than or less than as well
+#F F T T 
+data[,1]>2
+#logical values returned by a logic test can be used like numbers to index data structure
+data[data[,1]>2,]
+
+#load wages.csv; stringsAsFactors argument prevents strings from being treated as factors
+wages = read.csv(file="c:/Users/Owner/Desktop/biocomp_final/biocomp_notes/wages.csv",header=TRUE,stringsAsFactors=FALSE)
+#returns "data.frame"
+class(wages)
+#3294 4; dimension (cols x rows) of matrix, array, or data frame
+dim(wages)
+#returns first 6 rows and header
+head(wages)
+#extract all female wage data using sq brackets
+females=wages[wages[,1]=="female",]
+#1569 (rows) and 4 (cols)
+dim(females)
+#female
+unique(females[,1])
+#1569 4 
+females2=wages[wages$gender=="female",]
+dim(females2)
+#female
+unique(females2$gender)
+#using f(x) subset() rather than sq brackets indexing to access subet of data
+females3=subset(x=wages,wages$gender=="female")
+dim(females3)
+
+#Challenge
+#x1 has female unique years while x2 has male unique years
+f = cbind("female",x1)
+m = cbind("male",x2)
+out = rbind(f,m)
+
+#change working dir from Desktop to folder on Desktop (r-novice-inflammation)
+setwd("r-novice-inflammation/")
+#read a file within the dir 
+dat = read.csv(file="data/inflammation-01.csv",header=FALSE)
+#first 6 rows and headers of each
+head(dat)
+#ask what type of thing dat is 
+class(dat)
+#dimenstions (rows cols)
+dim(dat)
+#first values in dat, row 1, col 1
+dat[1,1]
+dat[30,20]
+#use function c (combine) to pick columns from certain rows
+#pick cols 10 and 20  rows 1, 3, and 5
+dat[c(1,3,5),c(10,20)]
+
+#set variable weight_kg to 55
+weight_kg <- 55
+#convert kg to lbs 
+2.2 * weight_kg 
+
+```
+
+Challenge:
+1. Write a file containing the unique gender-yearsExperience combinations contained in the file “wages.csv”. The file you create should contain gender in the first column and yearsExperience in a second column with a space separating the two columns. The rows should be sorted first by gender and then by
+yearsExperience, but remember to keep the pairings in a given row intact. Don’t worry about column
+names in the output file. Hint: order() is likely a useful function for sorting two-dimensional data
+structures in R. Also, the opposite of read.table() is write.table().
+
+```{r}
+data=read.table("C:/Users/Owner/Desktop/biocomp_final/biocomp_notes/wages.csv",header=TRUE,sep=",",stringsAsFactors=FALSE)
+dim(data)
+head(data)
+
+genderYears=data[,1:2]
+unique_genderYears=unique(genderYears)
+
+sorted=unique_genderYears[order(unique_genderYears[,1],unique_genderYears[,2]),]
+
+write.table(sorted,"sortedUniqueWages.txt",col.names=FALSE,row.names=FALSE,sep=" ",quote=FALSE)
+
+# could also have separated into female and male data sets, found unique years, and recombined into matrix or dataframe
+
+```
+
+2. Return the following information to the R console when the script is executed: the gender, yearsExperience, and wage for the highest earner, the gender, yearsExperience, and wage for the lowest earner, and the number of females in the top ten earners in this data set. Be sure to indicate, which output is which when returning them to the console.
+
+```{r}
+
+maxEarner=data[data$wage==max(data$wage),]
+print(c("The maximum earner was:", maxEarner[c(1:2,4)]))
+
+minEarner=data[data$wage==min(data$wage),]
+print(c("The minimum earner was:", minEarner[c(1:2,4)]))
+
+sortedWages=data[order(data$wage,decreasing=TRUE),]
+topTen=sortedWages[1:10,]
+femalesInTopTen=sum(topTen$gender=="female")
+print(paste("There were ",femalesInTopTen," females in the top ten earners.",sep=""))
+
+```
+
+3. Return one more piece of information to the console: the effect of graduating college (12 vs. 16 years of school) on the minimum wage for earners in this dataset.
+
+```{r}
+
+HSgrads=data[data$yearsSchool==12,]
+BSgrads=data[data$yearsSchool==16,]
+
+minHSwage=min(HSgrads$wage)
+minBSwage=min(BSgrads$wage)
+diff=round(minBSwage-minHSwage,3)
+print(paste("A bachelors degree provides ",diff," greater minimum wage."))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,162 @@
+---
+title: "Revisited Exercises"
+author: "Salinas, Alexa"
+date: "12/17/2019"
+output: word_document
+---
+
+The following three questions come from Exercises you completed over the semester. I chose
+these three questions because they are reasonably involved sets of code that review a number
+of concepts and functionality from Unix and R. I've tried to comment the code heavily in 
+order for you to understand what the code is doing step by step.
+
+## Exercise 4, question 3
+Imagine you generated a large amount of sequences of a marker gene for many samples. 
+The sequence ID associated with each sequence in the file contains information about the 
+sample, including the date the sample was taken, but also a bunch of information that only 
+means something to the facility that did the sequencing. You want to generate a list of 
+dates for which you have samples with sequence information. Write a pipeline that generates 
+a list of dates from the file sequences.fasta.
+
+The call cat sequences.fasta | head returns this:
+
+>_Site001_2016-01-01_f150_r300_GTCTGA_1
+CCTGGTGTCAGCCATACGATGTAGTTTGACACTCGCAGGTAGATATGATCCATTAGCTGATGAGCAACC
+>_Site001_2016-01-01_f150_r300_GTCTGA_2
+ATTGGCTTAGCTGCCTAGTGACCAATAGTGAAGTTTAACTTTCGTTCGGTCGGATGTGAGATCACCTAA
+>_Site001_2016-01-01_f150_r300_GTCTGA_3
+TCGACAAGATACCAGGATAATTGGTCCACTTCTTGATATCGAGACGAGAAGTTCTAGCGTCTTACTTAG
+>_Site001_2016-01-01_f150_r300_GTCTGA_4
+CCGGAAATCAAGGCCATTTCTTCGGTGCCCTTGCTGTGACCGGGGGCGGCTCATTGGATGAGACTACTG
+>_Site001_2016-01-01_f150_r300_GTCTGA_5
+AAGTAGCTTGAGAGGTACCAACCCATCCTATGACCGCAGAGACTACACAAAAAACTTCCAAAATACTTT
+
+Our goal is to get rid of the sequence information, isolate the date (format: YYYY-MM-DD)
+from the sequence record lines (start with >), and generate a list of the unique dates.
+
+This pipeline relies on regular expressions and would do the job:
+
+# cat the file to get access to its content line by line
+# use grep to search for lines that contain ">" (the sequence record lines)
+# find and replace the >_SiteXXX_ text before the date with nothing using sed
+# find and replace the _f150_r300_XXXXXX_X text after the date with nothing using sed
+# use uniq to get only unique dates
+
+cat sequences.fasta | grep “>” | sed -E ‘s/^>.{5}[0-9]{3}_//g’ | sed -E ‘s/(_f.*)?//g’ | uniq
+
+This pipeline uses cut and would do the job:
+
+# cat the file to get access to its content line by line
+# use grep to search for lines that contain ">" (the sequence record lines)
+# use cut to extract only the date, which if we use '_' as the delimiter is the 3rd field
+# use uniq to get only unique dates
+
+cat sequences.fasta | grep ">" | cut -d '_' -f 3 | uniq
+
+## Exercise 4, question 4
+Imagine you have a number of tab-delimited text files in a directory. All of these files 
+contain 5 columns separated by tabs (\t) and have the file extension .txt. Write a shell 
+script that converts all tab-delimited text files in a directory to comma-delimited files 
+that have the file extension .csv. A couple reminders for you. Recall that $() allows you 
+to assign the output of a Unix pipeline to a shell variable. Also remember that 
+echo $variable_name will send the information stored in $variable_name to stdout, which 
+can be piped into other Unix commands. 
+
+#shell script for converting tab-delimited files (.txt) to comma-delimited files (.csv)
+#usage: bash myscript.sh *.txt
+
+# use a for loop to work through each file name passed as an argument
+
+for file in $@
+do
+	#generate a name for the new .csv file using the old filename
+	#the newFile=$() syntax is used to store the output of the pipeline in the parentheses in the variable $newFile
+	#echo returns the current file name that is stored in the variable $file
+	# we then change .txt to .csv using sed; the backslash escapes the metacharacter . so that
+	# we actually match the period in the file extension
+	newFile=$(echo $file | sed 's/\.txt/\.csv/')
+	
+	# the contents of the curent tab-delimited file are accessed using cat
+	# all tabs (\t) are replaced with commas
+	# the comma delimited file contents are redirected to the new file name we generated above
+	cat $file | tr '\t' ',' > $newFile
+done
+
+## Exercise 8, question 1
+Analysis of data surrounding sports teams has grown into a major business for the teams 
+themselves and the media. One cool summary plot that media outlets generate to summarize 
+a game, in this case basketball, is a line graph depicting the cumulative score for each team 
+as a function of time in the game (see exercise for a figure).
+I first saw this plot a number of years ago when reading about the results of a game where the 
+University of Wisconsin (Go Badgers!) played Michigan State University. Using the score-by-score 
+information from this game summarized in “UWvMSU_1-22-13.txt” generate a graph similar to the one 
+I show above. Don’t worry about how pretty your graph is. Focus more on the control structures 
+required in your script used to generate the plot.
+
+A couple tips on this one:
+-You’ll want to generate a matrix or dataframe with a cumulative score for each team whenever either team scores.
+-For plotting purposes, keep it simple. There is a function plot(x,y,type='l') in base package, 
+where x and y are vectors and type=‘l’ specifies a line graph. You can add a second line 
+to this graph with lines(x,y). Use the help file for these functions to figure out other 
+argument to customize the line types if you would like.
+NOW THAT WE"VE COVERED PLOTTING, I INSTEAD SHOW HOW TO GENERATE THE PLOT USING GGPLOT
+
+# load table of scoring
+scoring=read.table("UWvMSU_1-22-13.txt",header=TRUE,sep="\t",stringsAsFactors=FALSE)
+
+# look at data
+dim(scoring)
+head(scoring)
+
+***This data looks like this:
+time 		team 	score
+3.966667   	UW     	3
+4.583333   	UW     	2
+4.583333   	UW     	1
+4.833333  	MSU     2
+5.433333   	UW     	2
+5.533333  	MSU     1
+
+# preallocating data frame to store cumulative scores for both teams at each scoring event
+# putting time (including an initial score of 0-0 at beginning of game)
+cum_scores=data.frame(time=c(0,scoring[,1]))
+# adding columns for UW and MSU cumulative score at each scoring event
+cum_scores$UW=0
+cum_scores$MSU=0
+
+
+# looping through individual scoring events
+for(i in 1:nrow(scoring)){
+	# if wisconsin scored
+  if(scoring[i,2]=="UW"){
+  	# add the basket value to the wisconsin score
+    cum_scores$UW[(i+1)]=cum_scores$UW[i]+scoring[i,3]
+    # the michigan state score is unchanged so use the previous score
+    cum_scores$MSU[(i+1)]=cum_scores$MSU[i]
+    # if MSU scored
+  }else{
+  	# the wisocnsin score is unchanged so use the previous score
+    cum_scores$UW[(i+1)]=cum_scores$UW[i]
+    # add the basket value to the MSU score
+    cum_scores$MSU[(i+1)]=cum_scores$MSU[i]+scoring[i,3]
+  }
+}
+
+# plotting results
+library(ggplot2)
+
+# you can add two lines manually with two calls to geom_line(), but then you won't have a legend
+ggplot(data=cum_scores)+
+	geom_line(aes(x=time,y=UW),col="red")+
+	geom_line(aes(x=time,y=MSU),col="darkgreen")+
+	ylab("score")+
+	theme_classic()
+
+# alternatively you can convert your data to "long format" and get a legend
+plotUWMSU=data.frame(time=c(cum_scores$time,cum_scores$time),
+                     team=c(rep("UW",nrow(cum_scores)),rep("MSU",nrow(cum_scores))),
+                     score=c(cum_scores$UW,cum_scores$MSU))
+ggplot(data=plotUWMSU)+
+	geom_line(aes(x=time,y=score,color=team))+
+	scale_color_manual(values=c('darkgreen','red'))+
+	theme_classic()
